@@ -76,7 +76,6 @@ Ganho de pontos por:
 | ------- | ---------------------- |
 | W A S D | Movimentação           |
 | Espaço  | Interação e execução   |
-            de ações               |
 | Mouse   | Interações específicas |
 | ESC     | Pausar/Sair            |
 
