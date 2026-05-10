@@ -15,19 +15,14 @@ O jogador deve:
 
 * Completar desafios propostos pelos suspeitos
 * Coletar informações/pistas
-* Descobrir o paradeiro do professor
 
 Meta final: Encontrar o professor Romerito.
 
 3. Personagem Principal
 
 * Nome: (Max)
-* Descrição: Aluno curioso
+* Descrição: Aluno 
 * Movimentação: Livre (W, A, S, D, E)
-* Atributos:
-  Posição: define a localização do personagem no mapa
-  Velocidade: determina a rapidez da movimentação
-  Pontuação: representa o progresso do jogador através das pistas obtidas
 
 4. Inimigos e Obstáculos
 
@@ -39,10 +34,10 @@ Os obstáculos variam por desafio:
   * Fios: fios desordenados
 
 * Comportamento:
-Baseados em mecânica do minigame
+Baseados em mecânicas do minigame
 
 * Consequência:
-  * Falha no desafio + Perda de informação
+  * Falha no desafio -> Perda de informação
 
 5. Cenário (Mapa)
 * Ambiente principal: Escola
