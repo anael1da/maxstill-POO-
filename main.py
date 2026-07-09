@@ -93,6 +93,7 @@ while rodando:
                     fase = "creditos"
 
                 elif menu.botao_sair.collidepoint(evento.pos):
+                    print("CLICOU EM SAIR")
 
                     rodando = False
 

@@ -26,11 +26,11 @@ class Creditos:
 
         linhas = [
 
-            "Desenvolvedor: Ana Allyce, Lays Eduarda, Ana Elida"
+            "Desenvolvedor: Ana Allyce, Lays Eduarda, Ana Elida",
 
-            "Historia: Ana Allyce, lays eduarda, Ana Elida"
+            "Historia: Ana Allyce, lays eduarda, Ana Elida",
 
-            "Programacao: Ana Allyce, Lays Eduarda, Ana Elida"
+            "Programacao: Ana Allyce, Lays Eduarda, Ana Elida",
 
             "Agradecimentos especiais:",
 

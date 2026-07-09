@@ -32,10 +32,10 @@ class Menu:
 
         # BOTÃO SAIR
         self.botao_sair = pygame.Rect(
-            400,
-            605,
-            500,
-            80
+            380,
+            560,
+            520,
+            110
         )
 
     def desenhar(self, tela):
