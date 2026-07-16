@@ -1,113 +1,52 @@
-import pygame
+
 import sys
+import pygame
 
-from menu import Menu
-from creditos import Creditos
+from config import SW, SH
+from screens import screen_title, screen_pause
+from game import Game
 
-pygame.init()
 
-# TELA
-LARGURA = 1280
-ALTURA = 720
+def main():
+    screen = pygame.display.set_mode((SW, SH))
+    pygame.display.set_caption("Eu Sei o Que Vocês Fizeram na Corrida Passada")
+    clock = pygame.time.Clock()
 
-tela = pygame.display.set_mode((LARGURA, ALTURA))
+    while True:
+        # Exibe título e aguarda ENTER
+        screen_title(screen, clock)
 
-pygame.display.set_caption(
-    "Eu Sei O Que Vocês Fizeram Na Corrida Passada"
-)
+        # Cria uma nova sessão de jogo
+        game = Game(screen, clock)
 
-clock = pygame.time.Clock()
+        running = True
+        while running:
+            clock.tick(60)   # mantém 60 FPS; bloqueia se necessário
 
-# FONTE
-fonte = pygame.font.SysFont("Arial", 30)
+            events = []
+            for ev in pygame.event.get():
+                if ev.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
+                    # Pausa o jogo; se o resultado não for "resume", sai
+                    result = screen_pause(screen, clock)
+                    if result != "resume":
+                        running = False
+                else:
+                    events.append(ev)   # repassa todos os outros eventos ao jogo
 
-# OBJETOS
-menu = Menu()
-creditos = Creditos()
+            if not running:
+                break
 
-# CONTROLE DO JOGO
-fase = "menu"
-rodando = True
+            game.update(events)
+            game.draw()
 
-while rodando:
 
-    clock.tick(60)
-
-    # EVENTOS
-    for evento in pygame.event.get():
-
-        if evento.type == pygame.QUIT:
-            rodando = False
-
-        if evento.type == pygame.MOUSEBUTTONDOWN:
-
-            # MENU
-            if fase == "menu":
-
-                if menu.botao_jogar.collidepoint(evento.pos):
-                    print("BOTÃO JOGAR FUNCIONOU")
-                    fase = "jogo"
-
-                elif menu.botao_creditos.collidepoint(evento.pos):
-                    fase = "creditos"
-
-                elif menu.botao_sair.collidepoint(evento.pos):
-                    rodando = False
-
-            # VOLTAR DOS CRÉDITOS
-            elif fase == "creditos":
-
-                if creditos.botao_voltar.collidepoint(evento.pos):
-                    fase = "menu"
-
-            # VOLTAR DA TELA DE TESTE
-            elif fase == "jogo":
-                fase = "menu"
-
-    # DESENHAR MENU
-    if fase == "menu":
-
-        menu.desenhar(tela)
-
-    # DESENHAR CRÉDITOS
-    elif fase == "creditos":
-
-        creditos.desenhar(tela, fonte)
-
-    # TESTE DO BOTÃO JOGAR
-    elif fase == "jogo":
-
-        tela.fill((10, 15, 20))
-
-        titulo = pygame.font.SysFont(
-            "Arial",
-            60,
-            bold=True
-        )
-
-        texto = titulo.render(
-            "JOGO INICIADO!",
-            True,
-            (0, 255, 120)
-        )
-
-        tela.blit(
-            texto,
-            texto.get_rect(center=(640, 320))
-        )
-
-        aviso = fonte.render(
-            "Clique para voltar ao menu",
-            True,
-            (255, 255, 255)
-        )
-
-        tela.blit(
-            aviso,
-            aviso.get_rect(center=(640, 400))
-        )
-
-    pygame.display.flip()
-
-pygame.quit()
-sys.exit()
+# ─────────────────────────────────────────────────────
+#  PONTO DE ENTRADA
+# ─────────────────────────────────────────────────────
+if __name__ == "__main__":
+    # Garante que main() só é chamado quando o script é executado diretamente,
+    # não quando importado como módulo por outro arquivo.
+    main()
