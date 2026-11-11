@@ -8,6 +8,7 @@ from config import TILE
 from colors import C_NPC1, C_NPC2, C_NPC3, C_NPC4, C_BLACK, C_ACCENT
 from utils import draw_rect_border
 from config import font_sm
+from pathlib import Path
 
 
 # ─────────────────────────────────────────────────────
@@ -78,6 +79,24 @@ NPC_DATA = [
     },
 ]
 
+
+ # Sprites dos professores
+NPC_SPRITES = {
+    1: ("anderson.png", 4),
+    4: ("hugo.png", 4),
+    2: ("rickson.png", 4),
+    3: ("rolim.png", 5),
+}
+
+ # Numeração visual das salas
+NPC_NUMBERS = {
+    1: 1,  # Anderson
+    4: 2,  # Hugo
+    2: 3,  # Rickson
+    3: 4,  # Rolim
+}
+
+
 # ─────────────────────────────────────────────────────
 #  CLASSE NPC – PERSONAGEM NÃO JOGÁVEL
 # ─────────────────────────────────────────────────────
@@ -114,6 +133,28 @@ class NPC:
         self.done    = False    # False = ainda disponível para interação
         self.success = False    # resultado do minigame
 
+                # Carrega a sprite do professor
+        arquivo, colunas = NPC_SPRITES[self.data["id"]]
+        caminho = Path(__file__).parent / "imagens" / arquivo
+
+        sheet = pygame.image.load(str(caminho)).convert_alpha()
+
+        largura = sheet.get_width() // colunas
+        altura = sheet.get_height() // 4
+
+        if sheet.get_width() == 1536:
+            self.sprite = sheet.subsurface(
+                (320, 0, 240, 256)
+            ).copy()
+        else:
+            self.sprite = sheet.subsurface(
+                (0, 0, largura, altura)
+            ).copy()
+
+        self.sprite = pygame.transform.scale(
+            self.sprite, (48, 64)
+        )
+        
     def rect(self):
         """
         Retorna pygame.Rect de colisão/posição do NPC no espaço do mundo.
@@ -140,48 +181,25 @@ class NPC:
         return math.hypot(self.x - player.x, self.y - player.y) < TILE * 1.8
 
     def draw(self, surf, cam_x, cam_y):
-        """
-        Desenha o NPC na tela com ajuste de câmera.
-
-        Visual:
-            - Quadrado colorido (cor do data["color"]) se disponível
-            - Se done=True, cor escurecida pela metade (tom sombrio)
-            - Dois "olhos" e uma "boca" (similar ao player)
-            - Nome do NPC 18px acima do quadrado
-            - "[E]" 34px acima (só quando não concluído e player próximo —
-              o controle de proximidade é feito em Game.draw())
-
-        Nota: o label "[E]" é sempre desenhado se not done;
-              a lógica de proximidade para mostrar/ocultar pode
-              ser refinada ligando near() aqui.
-        """
-        r   = self.rect().move(-cam_x, -cam_y)
+        r = self.rect().move(-cam_x, -cam_y)
         col = self.data["color"]
 
-        # Escurece o NPC quando já interagido
         if self.done:
             col = tuple(c // 2 for c in col)
 
-        draw_rect_border(surf, col, r, radius=3)
+        # Desenha a sprite
+        sprite_rect = self.sprite.get_rect(
+            midbottom=(r.centerx, r.bottom + 12)
+        )
+        surf.blit(self.sprite, sprite_rect)
 
-        # Olhos
-        ex = r.x + 5
-        ey = r.y + 7
-        pygame.draw.rect(surf, C_BLACK, (ex,      ey, 4, 4))
-        pygame.draw.rect(surf, C_BLACK, (ex + 11, ey, 4, 4))
-
-        # Boca: reta se concluído (neutro), espessa se disponível
-        if self.done:
-            pygame.draw.rect(surf, C_BLACK, (ex + 2, ey + 10, 8, 2))  # boca reta
-        else:
-            pygame.draw.rect(surf, C_BLACK, (ex + 2, ey + 9,  8, 3))  # boca normal
-
-        # Nome do NPC acima do sprite
+        # Nome do NPC
         lb = font_sm.render(self.data["name"], True, col)
-        surf.blit(lb, (r.centerx - lb.get_width() // 2, r.y - 18))
+        surf.blit(lb, (sprite_rect.centerx - lb.get_width() // 2,
+                       sprite_rect.top - 18))
 
-        # Indicador de interação "[E]"
+        # Indicador [E]
         if not self.done:
             hint = font_sm.render("[E]", True, C_ACCENT)
-            surf.blit(hint, (r.centerx - hint.get_width() // 2, r.y - 34))
-
+            surf.blit(hint, (sprite_rect.centerx - hint.get_width() // 2,
+                             sprite_rect.top - 34))
