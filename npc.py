@@ -85,7 +85,7 @@ NPC_SPRITES = {
     1: ("anderson.png", 4),
     4: ("hugo.png", 4),
     2: ("rickson.png", 4),
-    3: ("rolim.png", 5),
+    3: ("rolim.png", 3),
 }
 
  # Numeração visual das salas
@@ -151,10 +151,11 @@ class NPC:
                 (0, 0, largura, altura)
             ).copy()
 
-        self.sprite = pygame.transform.scale(
-            self.sprite, (48, 64)
-        )
-        
+        if self.data["id"] == 3:
+            self.sprite = pygame.transform.scale(self.sprite, (60, 64))
+            
+        else:
+           self.sprite = pygame.transform.scale(self.sprite, (48, 64))
     def rect(self):
         """
         Retorna pygame.Rect de colisão/posição do NPC no espaço do mundo.
