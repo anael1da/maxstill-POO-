@@ -92,10 +92,10 @@ NPC_DATA = [
 
  # Sprites dos professores
 NPC_SPRITES = {
-    1: ("anderson.png", 4),
-    4: ("hugo.png", 4),
-    2: ("rickson.png", 4),
-    3: ("rolim.png", 5),
+    1: ("anderson_parado.png", 1),
+    4: ("hugo_parado.png", 1),
+    2: ("rickson_parado.png", 1),
+    3: ("rolim.png", 7),
 }
 
  # Numeração visual das salas
@@ -144,25 +144,23 @@ class NPC:
         self.success = False    # resultado do minigame
 
                 # Carrega a sprite do professor
+        
         arquivo, colunas = NPC_SPRITES[self.data["id"]]
         caminho = Path(__file__).parent / "imagens" / arquivo
 
         sheet = pygame.image.load(str(caminho)).convert_alpha()
 
-        largura = sheet.get_width() // colunas
-        altura = sheet.get_height() // 4
-
         if self.data["id"] == 3:
-            # Recorta o primeiro quadro do Rolim
+            largura = sheet.get_width() // colunas
+            altura = sheet.get_height() // 4
+
             self.sprite = sheet.subsurface(
                 (120, 0, 70, 100)
             ).copy()
 
-            # Remove as partes transparentes
             bounds = self.sprite.get_bounding_rect()
             self.sprite = self.sprite.subsurface(bounds).copy()
 
-            # Mantém a proporção original
             altura = 64
             largura = round(
                 self.sprite.get_width() * altura / self.sprite.get_height()
@@ -171,20 +169,10 @@ class NPC:
             self.sprite = pygame.transform.scale(
                 self.sprite, (largura, altura)
             )
-
         else:
-            if sheet.get_width() == 1536:
-                self.sprite = sheet.subsurface(
-                    (320, 0, 240, 256)
-                ).copy()
-            else:
-                self.sprite = sheet.subsurface(
-                    (0, 0, largura, altura)
-                ).copy()
+            self.sprite = pygame.transform.scale(sheet, (48, 64))
 
-            self.sprite = pygame.transform.scale(
-                      self.sprite, (48,64)
-            )
+            
     def rect(self):
         """
         Retorna pygame.Rect de colisão/posição do NPC no espaço do mundo.

@@ -22,7 +22,7 @@ class PiscinaGame(Minigame):
         super().__init__(screen)
 
                 # Carrega a imagem do nadador
-        sheet = pygame.image.load("maxstill-POO--main/assets/aluno.jpg").convert()
+        sheet = pygame.image.load("assets/aluno.jpg").convert()
         sheet.set_colorkey((0, 0, 0))
 
         self.swim_frames = []
