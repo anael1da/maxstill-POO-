@@ -7,7 +7,7 @@
     E / Espaço - Interagir com NPCs
     ESC       - Pausar / Sair
 =======================================================
-
+ 
   ESTRUTURA GERAL DO PROJETO (dividida em módulos):
     config.py    → constantes globais, mapa (RAW_MAP) e fontes
     colors.py    → paleta de cores

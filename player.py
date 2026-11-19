@@ -1,112 +1,194 @@
+
 """
-player.py — Personagem controlável (MAX).
+player.py — Personagem controlável (ALUNO).
 """
 
 import math
 import pygame
+from pathlib import Path
 from config import TILE
-from colors import C_PLAYER, C_BLACK
-from utils import draw_rect_border
 
 
 class Player:
-    """
-    Representa MAX, o personagem do jogador.
 
-    Atributos principais:
-        x, y      → posição em pixels no mundo (não na tela)
-        score     → pontuação acumulada (100 pts por pista obtida)
-        pistas    → lista de strings das pistas coletadas
-        completed → conjunto de IDs de minigames concluídos (não usado diretamente,
-                    mas preparado para extensão)
-
-    Tamanho:  24×24 px (quadrado verde-jade)
-    Velocidade: 3 px por frame
-    """
-
-    SIZE = 24   # lado do quadrado em pixels
-    SPD  = 3    # velocidade de movimento em pixels por frame
+    SIZE = 24
+    SPD = 3
+    SPRITE_WIDTH = 48
+    SPRITE_HEIGHT = 64
 
     def __init__(self, tx, ty):
-        """
-        Inicializa o player na posição de tile (tx, ty).
-
-        Converte coordenadas de tile para pixels, posicionando o player
-        no centro do tile (offset de TILE//2 = 16 px).
-        """
         self.x = tx * TILE + TILE // 2
         self.y = ty * TILE + TILE // 2
-        self.score    = 0    # pontuação total (exibida no HUD)
-        self.pistas   = []   # pistas coletadas (exibidas com TAB)
+
+        self.score = 0
+        self.pistas = []
         self.completed = set()
 
-    def rect(self):
-        """
-        Retorna o pygame.Rect de colisão do player no espaço do mundo.
+        # Direção inicial: frente
+        self.direction = 2
+        self.frame = 0
+        self.anim_tick = 0
 
-        Centralizado em (self.x, self.y); usado para detecção de colisão
-        com as paredes do mapa em Player.move().
-        """
+        self.frames = self.load_sprites()
+
+    def load_sprites(self):
+
+        caminho = Path(__file__).parent / "imagens" / "aluno.png"
+        sheet = pygame.image.load(str(caminho)).convert_alpha()
+
+        # Centros dos quatro personagens em cada linha
+        centros_x = [321, 524, 724, 925]
+
+        # Limites verticais das quatro linhas
+        linhas_y = [
+            (80, 330),
+            (370, 620),
+            (650, 890),
+            (920, 1170)
+        ]
+
+        frames = []
+
+        for y0, y1 in linhas_y:
+
+            direction_frames = []
+
+            for centro_x in centros_x:
+
+                # Região individual de cada quadro
+                x0 = max(0, centro_x - 95)
+                x1 = min(sheet.get_width(), centro_x + 95)
+
+                cell = sheet.subsurface(
+                    (x0, y0, x1 - x0, y1 - y0)
+                ).copy()
+
+                # Recorta somente a parte visível do personagem
+                bounds = cell.get_bounding_rect()
+
+                if bounds.width == 0 or bounds.height == 0:
+                    raise ValueError(
+                        "Quadro vazio na imagem aluno.png"
+                    )
+
+                cell = cell.subsurface(bounds).copy()
+
+                # Mantém a proporção dentro de um espaço fixo
+                largura = cell.get_width()
+                altura = cell.get_height()
+
+                fator = min(
+                    34 / largura,
+                    46 / altura
+                )
+
+                novo_tamanho = (
+                    max(1, round(largura * fator)),
+                    max(1, round(altura * fator))
+                )
+
+                cell = pygame.transform.scale(
+                    cell, novo_tamanho
+                )
+
+                # Quadro fixo para evitar tremedeira
+                quadro = pygame.Surface(
+                    (self.SPRITE_WIDTH, self.SPRITE_HEIGHT),
+                    pygame.SRCALPHA
+                )
+
+                pos_x = (
+                    self.SPRITE_WIDTH - cell.get_width()
+                ) // 2
+
+                pos_y = (
+                    self.SPRITE_HEIGHT - cell.get_height()
+                )
+
+                quadro.blit(cell, (pos_x, pos_y))
+
+                direction_frames.append(quadro)
+
+            frames.append(direction_frames)
+
+        return frames
+
+    def rect(self):
+
         h = self.SIZE
-        return pygame.Rect(self.x - h // 2, self.y - h // 2, h, h)
+
+        return pygame.Rect(
+            self.x - h // 2,
+            self.y - h // 2,
+            h,
+            h
+        )
 
     def move(self, dx, dy, walls):
-        """
-        Move o player aplicando colisão com paredes (AABB).
 
-        Parâmetros:
-            dx, dy → direção do movimento (-1, 0 ou 1) nos eixos X e Y
-            walls  → lista de pygame.Rect das paredes do mapa
+        if dx > 0:
+            self.direction = 1
 
-        Lógica de colisão em dois passos (separado por eixo):
-            1. Testa o movimento horizontal (nx) com self.y atual.
-               Se não colidir com nenhuma parede, aplica nx.
-            2. Testa o movimento vertical (ny) com self.x atual (já atualizado).
-               Se não colidir, aplica ny.
-        Separar os eixos evita que o player "grude" em cantos de paredes.
+        elif dx < 0:
+            self.direction = 3
 
-        Impacto no jogo:
-            Garante que MAX não atravesse paredes ('#') do RAW_MAP.
-            A velocidade efetiva é SPD * direção = até 3 px/frame.
-        """
+        elif dy < 0:
+            self.direction = 0
+
+        elif dy > 0:
+            self.direction = 2
+
+        self.anim_tick += 1
+
+        if self.anim_tick >= 8:
+            self.frame = (self.frame + 1) % 4
+            self.anim_tick = 0
+
         direction = pygame.Vector2(dx, dy)
+
         if direction.length_squared() > 1:
             direction.normalize_ip()
+
         delta = direction * self.SPD
-        # Subpassos <= 1 pixel evitam atravessar até obstáculos finos.
-        steps = max(1, math.ceil(max(abs(delta.x), abs(delta.y))))
+
+        steps = max(
+            1,
+            math.ceil(max(abs(delta.x), abs(delta.y)))
+        )
+
         for _ in range(steps):
-            for axis, amount in (("x", delta.x / steps), ("y", delta.y / steps)):
+
+            for axis, amount in (
+                ("x", delta.x / steps),
+                ("y", delta.y / steps)
+            ):
+
                 previous = getattr(self, axis)
+
                 setattr(self, axis, previous + amount)
-                if any(self.rect().colliderect(wall) for wall in walls):
+
+                if any(
+                    self.rect().colliderect(wall)
+                    for wall in walls
+                ):
                     setattr(self, axis, previous)
 
+    def stop(self):
+
+        self.frame = 0
+        self.anim_tick = 0
+
     def draw(self, surf, cam_x, cam_y):
-        """
-        Desenha MAX na tela ajustando pela posição da câmera.
 
-        Parâmetros:
-            surf          → surface principal da janela
-            cam_x, cam_y  → deslocamento da câmera em pixels
+        sprite = self.frames[self.direction][self.frame]
 
-        Visual:
-            - Quadrado verde-jade com borda escura (draw_rect_border)
-            - Dois retângulos 4×4 px pretos simulando "olhos"
-            - Um retângulo 8×3 px preto simulando "boca"
+        draw_x = round(
+            self.x - cam_x - self.SPRITE_WIDTH // 2
+        )
 
-        O offset da câmera é subtraído para converter coordenadas do
-        mundo em coordenadas de tela.
-        """
-        r = self.rect().move(-cam_x, -cam_y)
-        draw_rect_border(surf, C_PLAYER, r, radius=4)
+        draw_y = round(
+            self.y - cam_y + self.SIZE // 2 - self.SPRITE_HEIGHT
+        )
 
-        # Olhos: dois quadradinhos dentro do retângulo do player
-        ex = r.x + 6
-        ey = r.y + 7
-        pygame.draw.rect(surf, C_BLACK, (ex,      ey, 4, 4))   # olho esquerdo
-        pygame.draw.rect(surf, C_BLACK, (ex + 10, ey, 4, 4))   # olho direito
-
-        # Boca: retângulo horizontal centralizado
-        pygame.draw.rect(surf, C_BLACK, (ex + 2, ey + 9, 8, 3))
+        surf.blit(sprite, (draw_x, draw_y))
 

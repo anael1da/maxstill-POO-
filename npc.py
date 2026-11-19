@@ -20,28 +20,38 @@ NPC_DATA = [
         "color": C_NPC1,                  
         "minigame": "piscina",                
         "intro": [
-            "Anderson: Eai, Max! Procurando o prof. Romerito?",
-            "Anderson: Eu sei onde ele estava antes de sumir...",
-            "Anderson: ...mas só conto se você me vencer numa corrida na piscina!",
-            "Anderson: Desvie de mim e chegue ao outro lado!",
-            "Anderson: Quero ver voce ganhar!",
+            "Anderson: Eai, Max! Procurando o que por aqui?",
+            "Max: Tava atrás de Romerito, me disseram que você sabia onde ele estava.",
+            "Anderson: Sei sim...",
+            "Anderson: ...mas antes preciso de um favor!",
+            "Max: Diz aí!", 
+            "Anderson: Tenho que coletar alguns objetos na piscina,mas estou com preguiça!",
+            "Anderson: Se você fizer tudo, eu posso dizer onde ele deve estar!",
+            "Max: KKKKKKKKKK Ta bom,ze buchinho!",
         ],
         # após vitória: indica a peruca e o laboratório
-        "pista_sucesso": "Anderson: Como venceu,vou dar a dica, Da última vez que o vi foi com Rolim!",
+        "pista_sucesso": "Anderson: Como venceu,vou dar a dica.\n Da última vez que o vi,ele tava na sala de Hugo!",
         "pista_falha":   "Anderson: Hahaha, não foi dessa vez. Vai ter que se virar garotinho.",
         # Texto compacto salvo no caderno de pistas do jogador
-        "pista_texto":   "[PISTA 1] Romerito foi visto indo a direção academica.",
+        "pista_texto":   "[PISTA 1] Romerito foi visto indo ao laboratório de Hugo.",
     },
     {
         "id": 3, "name": "Rolim",
         "color": C_NPC3,                       # quadradinho amarelo
         "minigame": "peruca",                  # aciona PerucaGame
         "intro": [
-            "Rolim: Aaai, Max! Que susto!",
-            "Rolim: Perdi minha peruca em algum lugar aqui.",
-            "Rolim: Se você achar pra mim, te conto um",
-            "Rolim: segredo sobre o prof. Romerito!",
-            "Rolim: Ache a peruca (P) clicando no lugar certo!",
+            "Max: Alessandro? Você é careca?",
+            "Rolim: Oi Max KKKKKKK! Pois é... O que deseja?",
+            "Max: Preciso saber por onde anda Romerito, você sabe me dizer algo?",
+            "Rolim: Sei sim. Acontece que estou com um problemão...",
+            "Rolim: Perdi minha peruca em algum lugar desta sala.",
+            "Rolim: Sem ela, não posso sair daqui!",
+            "Rolim: Mas podemos fazer um acordo...",
+            "Rolim: Se encontrar minha peruca, posso te dizer onde",
+            "o professor Romerito pode estar.",
+            "Max: Pode ser!",
+            "Rolim: Procure bem! Ela está escondida por aqui.",
+            "Rolim: Clique no lugar certo para encontrar a peruca!"
         ],
         "pista_sucesso": "Rolim: Obrigada! O prof. Romerito me pediu",
         "pista_falha":   "Rolim: Hmm, não era ali... mas acho que ele",
@@ -67,14 +77,14 @@ NPC_DATA = [
         "color": C_NPC4,                       # quadradinho roxo
         "minigame": "fios",                    # aciona FiosGame
         "intro": [
-            "Diego: Max! Menos mal que apareceu.",
-            "Diego: Tô com uns fios todos embaralhados aqui.",
-            "Diego: Se você conectar os fios certos,",
-            "Diego: eu te digo onde o prof. Romerito está!",
-            "Diego: Conecte cada fio à cor correta!",
+            "Hugo: Max! Menos mal que apareceu.",
+            "Hugo: Tô com uns fios todos embaralhados aqui.",
+            "Hugo: Se você conectar os fios certos,",
+            "Hugo: eu te digo onde o prof. Romerito está!",
+            "Hugo: Conecte cada fio à cor correta!",
         ],
-        "pista_sucesso": "Diego: Perfeito! O prof. Romerito tá na SALA\n   DOS PROFESSORES, preparando uma SURPRESA\n   pro evento da escola!",
-        "pista_falha":   "Diego: Quase... ele foi pra sala dos professores.",
+        "pista_sucesso": "Hugo: Perfeito! O prof. Romerito tá na SALA\n   DOS PROFESSORES, preparando uma SURPRESA\n   pro evento da escola!",
+        "pista_falha":   "Hugo: Quase... ele foi pra sala dos professores.",
         "pista_texto":   "[PISTA 4] Romerito está na sala dos professores\n   preparando uma surpresa.",
     },
 ]
@@ -85,7 +95,7 @@ NPC_SPRITES = {
     1: ("anderson.png", 4),
     4: ("hugo.png", 4),
     2: ("rickson.png", 4),
-    3: ("rolim.png", 3),
+    3: ("rolim.png", 5),
 }
 
  # Numeração visual das salas
@@ -142,20 +152,39 @@ class NPC:
         largura = sheet.get_width() // colunas
         altura = sheet.get_height() // 4
 
-        if sheet.get_width() == 1536:
+        if self.data["id"] == 3:
+            # Recorta o primeiro quadro do Rolim
             self.sprite = sheet.subsurface(
-                (320, 0, 240, 256)
-            ).copy()
-        else:
-            self.sprite = sheet.subsurface(
-                (0, 0, largura, altura)
+                (120, 0, 70, 100)
             ).copy()
 
-        if self.data["id"] == 3:
-            self.sprite = pygame.transform.scale(self.sprite, (60, 64))
-            
+            # Remove as partes transparentes
+            bounds = self.sprite.get_bounding_rect()
+            self.sprite = self.sprite.subsurface(bounds).copy()
+
+            # Mantém a proporção original
+            altura = 64
+            largura = round(
+                self.sprite.get_width() * altura / self.sprite.get_height()
+            )
+
+            self.sprite = pygame.transform.scale(
+                self.sprite, (largura, altura)
+            )
+
         else:
-           self.sprite = pygame.transform.scale(self.sprite, (48, 64))
+            if sheet.get_width() == 1536:
+                self.sprite = sheet.subsurface(
+                    (320, 0, 240, 256)
+                ).copy()
+            else:
+                self.sprite = sheet.subsurface(
+                    (0, 0, largura, altura)
+                ).copy()
+
+            self.sprite = pygame.transform.scale(
+                      self.sprite, (48,64)
+            )
     def rect(self):
         """
         Retorna pygame.Rect de colisão/posição do NPC no espaço do mundo.

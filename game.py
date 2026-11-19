@@ -147,6 +147,7 @@ class Game:
         elif mg == "fios":    self.minigame = FiosGame(self.screen)
         self.active_npc = npc
         self.phase = "minigame"
+        print("PISCINA INICIADA!")
 
     # ── PÓS-MINIGAME ────────────────────────────────
     def finish_minigame(self):
@@ -235,34 +236,50 @@ class Game:
 
         Sempre chama update_camera() ao final.
         """
+       
         keys = pygame.key.get_pressed()
 
         if self.phase == "explore":
             dx = keys[pygame.K_d] - keys[pygame.K_a]
             dy = keys[pygame.K_s] - keys[pygame.K_w]
+
             if dx or dy:
                 self.player.move(dx, dy, self.gmap.walls)
+            else:
+                self.player.stop()
+
             for ev in events:
                 if ev.type == pygame.KEYDOWN:
                     if ev.key in (pygame.K_e, pygame.K_SPACE):
                         self.interact()
+
                     if ev.key == pygame.K_TAB:
-                        screen_pistas(self.screen, self.clock, self.player)
+                        screen_pistas(
+                            self.screen,
+                            self.clock,
+                            self.player
+                        )
 
         elif self.phase == "dialog":
             for ev in events:
-                if ev.type == pygame.KEYDOWN and ev.key in (pygame.K_e, pygame.K_SPACE):
+                if ev.type == pygame.KEYDOWN and ev.key in (
+                    pygame.K_e, pygame.K_SPACE
+                ):
                     self.dialog.advance()
-                    # Se o diálogo terminou e nenhum callback mudou a fase
+                    print("DIÁLOGO AVANÇOU")
+                    print("DIÁLOGO ATIVO:", self.dialog.active)
+                    print("FASE:", self.phase)
+
                     if not self.dialog.active and self.phase == "dialog":
                         self.phase = "explore"
 
         elif self.phase == "minigame":
             for ev in events:
                 self.minigame.handle_event(ev)
+
             self.minigame.update()
+
             if self.minigame.done:
-                # Exibe o último frame do minigame por 1.8 segundo
                 self.screen.fill(C_BLACK)
                 self.minigame.draw()
                 pygame.display.flip()
@@ -271,9 +288,10 @@ class Game:
 
         elif self.phase == "final":
             screen_final(self.screen, self.clock, self.player)
-            self.reset()   # reinicia completamente para novo jogo
+            self.reset()
 
         self.update_camera()
+ 
 
     # ── DRAW (renderização por frame) ─────────────────
     def draw(self):
