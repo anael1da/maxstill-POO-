@@ -42,9 +42,12 @@ NPC_DATA = [
         "color": C_NPC3,                       # quadradinho amarelo
         "minigame": "peruca",                  # aciona PerucaGame
         "intro": [
+            "Max: Oi, Alessandro",
             "Rolim: Rapaz, Que susto!",
-            "Rolim: Perdi minha peruca em algum lugar aqui.",
-            "Rolim: Se você achar pra mim, te conto um",
+            "Max: Oxe, o senhor é careca?",
+            "Rolim: Pois é,longa história...Mas o que deseja?",
+            "Rolim: Eu tava procurando Romerito...\n disseram que ele passou por aqui.",
+            "Rolim: Passou sim. Mas só te dou mais detalhes se você me ajudar a encontrar a peruca.",
             "Rolim: segredo sobre o prof. Romerito!",
             "Rolim: Ache a peruca (P) clicando no lugar certo!",
         ],
@@ -73,14 +76,14 @@ NPC_DATA = [
         "color": C_NPC4,                       # quadradinho roxo
         "minigame": "fios",                    # aciona FiosGame
         "intro": [
-            "Diego: Max! Menos mal que apareceu.",
-            "Diego: Tô com uns fios todos embaralhados aqui.",
-            "Diego: Se você conectar os fios certos,",
-            "Diego: eu te digo onde o prof. Romerito está!",
-            "Diego: Conecte cada fio à cor correta!",
+            "Hugo: Max! Menos mal que apareceu.",
+            "Hugo: Tô com uns fios todos embaralhados aqui.",
+            "Hugo: Se você conectar os fios certos,",
+            "Hugo: eu te digo onde o prof. Romerito está!",
+            "Hugo: Conecte cada fio à cor correta!",
         ],
-        "pista_sucesso": "Diego: Perfeito! O prof. Romerito tá na SALA\n   DOS PROFESSORES, preparando uma SURPRESA\n   pro evento da escola!",
-        "pista_falha":   "Diego: Quase... ele foi pra sala dos professores.",
+        "pista_sucesso": "Hugo: Perfeito! O prof. Romerito tá na SALA\n   DOS PROFESSORES, preparando uma SURPRESA\n   pro evento da escola!",
+        "pista_falha":   "Hugo: Quase... ele foi pra sala dos professores.",
         "pista_texto":   "[PISTA 4] Romerito está na sala dos professores\n   preparando uma surpresa.",
     },
 ]
