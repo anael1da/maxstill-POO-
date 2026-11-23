@@ -29,6 +29,8 @@ class PerucaGame(Minigame):
         self.revealed = [[False] * self.GRID for _ in range(self.GRID)]
 
         self.tries = 18
+        self.tempo_limite = 10
+        self.tempo_inicio = pygame.time.get_ticks()
         self.hovered = (-1, -1)
 
         # Caminho da pasta das fotografias
@@ -130,7 +132,14 @@ class PerucaGame(Minigame):
                             self.done = True
                             self.success = False
                             self.msg = "As tentativas acabaram!"
+   
+    def update(self):
+        tempo_decorrido = (pygame.time.get_ticks() - self.tempo_inicio) / 1000
 
+        if tempo_decorrido >= self.tempo_limite:
+            self.done = True
+            self.success = False
+            self.msg = "Tempo esgotado! Voce perdeu!"
     def draw(self):
 
         self.screen.fill((40, 30, 50))
@@ -225,6 +234,17 @@ class PerucaGame(Minigame):
             "Encontre Rolim! Vermelho = muito perto"
         )
 
+        tempo_passado = (pygame.time.get_ticks() - self.tempo_inicio) / 1000
+        tempo_restante = max(0, self.tempo_limite - int(tempo_passado))
+
+        draw_text(
+            self.screen,
+            f"Tempo: {tempo_restante}s",
+            font_md,
+            C_YELLOW,
+            20,
+            110
+        )
         draw_text(
             self.screen,
             f"Tentativas: {self.tries}",

@@ -47,6 +47,8 @@ class FiosGame(Minigame):
         self.drag_pos     = (0, 0)  # posição atual do mouse durante drag
         self.mistakes     = 0     # número de tentativas erradas
         self.max_mistakes = 3
+        self.tempo_limite = 15
+        self.tempo_inicio = pygame.time.get_ticks()
 
     def _left_pos(self, i):
         """Retorna (x, y) do centro do pino esquerdo i."""
@@ -55,7 +57,18 @@ class FiosGame(Minigame):
     def _right_pos(self, i):
         """Retorna (x, y) do centro do pino direito i."""
         return (740, 160 + i * 100)
+    def update(self):
+        if self.done:
+            return
 
+        tempo_decorrido = (pygame.time.get_ticks() - self.tempo_inicio) / 1000
+
+        if tempo_decorrido >= self.tempo_limite:
+            self.done = True
+            self.success = False
+            self.msg = "Tempo esgotado! Fios nao conectados!"    
+
+    
     def handle_event(self, event):
         """
         Processa drag-and-drop de fios.
@@ -179,6 +192,17 @@ class FiosGame(Minigame):
                       "Arraste cada fio da esquerda ao pino da mesma cor!")
         draw_text(self.screen, f"Erros: {self.mistakes}/{self.max_mistakes}",
                   font_md, C_RED, 20, 80)
+        tempo_passado = (pygame.time.get_ticks() - self.tempo_inicio) / 1000
+        tempo_restante = max(0, self.tempo_limite - int(tempo_passado))
+
+        draw_text_center(
+            self.screen,
+            f"TEMPO RESTANTE: {tempo_restante}s",
+            font_lg,
+            C_RED if tempo_restante <= 5 else C_YELLOW,
+            SW // 2,
+            590
+        )
 
         if self.msg:
             s = pygame.Surface((SW, 60), pygame.SRCALPHA)
