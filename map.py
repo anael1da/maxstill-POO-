@@ -8,9 +8,15 @@ from config import TILE, SW, SH
 
 # Retângulos (x, y, largura, altura) medidos na imagem 1402 x 1122.
 MAP_COLLIDERS = [
-    # Muro externo, incluindo os portões fechados e pilares laterais.
-    (0, 0, 1402, 91), (0, 1030, 1402, 92),
-    (0, 91, 68, 939), (1335, 91, 67, 939),
+    # Muro externo, deixando abertura na porta superior.
+    (0, 0, 650, 91),
+    (752, 0, 650, 91),
+    (0, 1030, 1402, 92),
+
+    # Laterais do muro.
+    (0, 91, 68, 939),
+    (1335, 91, 67, 939),
+
     # Bancos.
     (83, 321, 78, 58), (83, 696, 78, 58),
     (1243, 321, 78, 58), (1243, 802, 78, 59),
@@ -73,6 +79,10 @@ class GameMap:
         self.walls = [self.transform_rect(r) for r in MAP_COLLIDERS]
         ox, oy = self.offset
         self.walls.extend([pygame.Rect(0, 0, ox, SH), pygame.Rect(ox + size[0], 0, SW - ox - size[0], SH)])
+
+         # Área que detecta a entrada na porta superior.
+        self.door_trigger = self.transform_rect((650, 0, 102, 150))
+        
         self.minimap = pygame.transform.smoothscale(self.image, (180, 120))
 
     def world_position(self, point):

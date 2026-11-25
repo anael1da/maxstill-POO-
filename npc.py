@@ -1,3 +1,4 @@
+
 """
 npc.py — Dados dos NPCs (pistas/falas) e a classe NPC.
 """
@@ -12,33 +13,14 @@ from pathlib import Path
 
 
 # ─────────────────────────────────────────────────────
-#  DADOS DOS NPCs E PISTAS
+# DADOS DOS NPCs E PISTAS
 # ─────────────────────────────────────────────────────
+
 NPC_DATA = [
     {
-        "id": 1, "name": "Anderson",
-        "color": C_NPC1,                  
-        "minigame": "piscina",                
-        "intro": [
-            "Anderson: Eai, Max! Procurando o que por aqui?",
-            "Max: Tava atrás de Romerito, me disseram que você sabia onde ele estava.",
-            "Anderson: Sei sim...",
-            "Anderson: ...mas antes preciso de um favor!",
-            "Max: Diz aí!", 
-            "Anderson: Tenho que coletar alguns objetos na piscina,mas estou com preguiça!",
-            "Anderson: Se você fizer tudo, eu posso dizer onde ele deve estar!",
-            "Max: KKKKKKKKKK Ta bom,ze buchinho!",
-        ],
-        # após vitória: indica a peruca e o laboratório
-        "pista_sucesso": "Anderson: Como venceu,vou dar a dica.\n Da última vez que o vi,ele tava na sala de Hugo!",
-        "pista_falha":   "Anderson: Hahaha, não foi dessa vez. Vai ter que se virar garotinho.",
-        # Texto compacto salvo no caderno de pistas do jogador
-        "pista_texto":   "[PISTA 1] Romerito foi visto indo ao laboratório de Hugo.",
-    },
-    {
         "id": 3, "name": "Rolim",
-        "color": C_NPC3,                       # quadradinho amarelo
-        "minigame": "peruca",                  # aciona PerucaGame
+        "color": C_NPC3,
+        "minigame": "peruca",
         "intro": [
             "Max: Alessandro? Você é careca?",
             "Rolim: Oi Max KKKKKKK! Pois é... O que deseja?",
@@ -53,14 +35,15 @@ NPC_DATA = [
             "Rolim: Procure bem! Ela está escondida por aqui.",
             "Rolim: Clique no lugar certo para encontrar a peruca!"
         ],
-        "pista_sucesso": "Rolim: Obrigada! O prof. Romerito me pediu",
-        "pista_falha":   "Rolim: Hmm, não era ali... mas acho que ele",
-        "pista_texto":   "[PISTA 3] Romerito pediu emprestado um\n   livro de eletricidade para Bianca.",
+        "pista_sucesso": "Rolim: AEEE, você conseguiu!\nRolim: Acho que vi Romerito ali na quadra!",
+        "pista_falha": "Rolim: KKKKK, não foi dessa vez! Tente novamente.",
+        "pista_texto": "[PISTA 1] Romerito pode estar na quadra.",
     },
+
     {
         "id": 2, "name": "Rickson",
-        "color": C_NPC2,                       # quadradinho azul
-        "minigame": "gol",                     # aciona GolGame
+        "color": C_NPC2,
+        "minigame": "gol",
         "intro": [
             "Rickson: Fala, Max! Tô treinando pro campeonato.",
             "Rickson: Posso te dar uma dica sobre RoRo...",
@@ -68,14 +51,34 @@ NPC_DATA = [
             "Rickson: momento EXATO que eu indicar!",
             "Rickson: Pressione ESPAÇO na hora certa!",
         ],
-        "pista_sucesso": "Rickson: Gol! Tá bom... Ouvi o prof. Romerito\n   falando sobre uns FIOS elétricos quebrados\n   no laboratório.",
-        "pista_falha":   "Rickson: Errou o timing... mas ele mencionou\n   o laboratório uma vez.",
-        "pista_texto":   "[PISTA 2] Rickon ouviu Romerito falar de fios\n   elétricos no laboratório.",
+        "pista_sucesso": "Rickson: BOA! Você conseguiu!\nRickson: Acho que vi Romerito ali na piscina!",
+        "pista_falha": "Rickson: Errou o timing, hein! Não foi dessa vez.",
+        "pista_texto": "[PISTA 2] Romerito pode estar na piscina.",
     },
+
+    {
+        "id": 1, "name": "Anderson",
+        "color": C_NPC1,
+        "minigame": "piscina",
+        "intro": [
+            "Anderson: Eai, Max! Procurando o que por aqui?",
+            "Max: Tava atrás de Romerito, me disseram que você sabia onde ele estava.",
+            "Anderson: Sei sim...",
+            "Anderson: ...mas antes preciso de um favor!",
+            "Max: Diz aí!",
+            "Anderson: Tenho que coletar alguns objetos na piscina,mas estou com preguiça!",
+            "Anderson: Se você fizer tudo, eu posso dizer onde ele deve estar!",
+            "Max: KKKKKKKKKK Ta bom,ze buchinho!",
+        ],
+        "pista_sucesso": "Anderson: Aí sim! Você conseguiu!\nAnderson: Acho que vi Romerito mexendo em uns fios ali!",
+        "pista_falha": "Anderson: Eita, não conseguiu! Fica pra próxima.",
+        "pista_texto": "[PISTA 3] Romerito pode estar mexendo em uns fios.",
+    },
+
     {
         "id": 4, "name": "Hugo",
-        "color": C_NPC4,                       # quadradinho roxo
-        "minigame": "fios",                    # aciona FiosGame
+        "color": C_NPC4,
+        "minigame": "fios",
         "intro": [
             "Hugo: Max! Menos mal que apareceu.",
             "Hugo: Tô com uns fios todos embaralhados aqui.",
@@ -83,14 +86,14 @@ NPC_DATA = [
             "Hugo: eu te digo onde o prof. Romerito está!",
             "Hugo: Conecte cada fio à cor correta!",
         ],
-        "pista_sucesso": "Hugo: Perfeito! O prof. Romerito tá na SALA\n   DOS PROFESSORES, preparando uma SURPRESA\n   pro evento da escola!",
-        "pista_falha":   "Hugo: Quase... ele foi pra sala dos professores.",
-        "pista_texto":   "[PISTA 4] Romerito está na sala dos professores\n   preparando uma surpresa.",
+        "pista_sucesso": "Hugo: Perfeito! Você conseguiu!\nHugo: Acho que vi Romerito na pista de corrida, se não me engano!",
+        "pista_falha": "Hugo: Eita! Esses fios deram um nó na minha cabeça. Tente novamente.",
+        "pista_texto": "[PISTA 4] Romerito pode estar na pista de corrida.",
     },
 ]
 
 
- # Sprites dos professores
+# Sprites dos professores
 NPC_SPRITES = {
     1: ("anderson_parado.png", 1),
     4: ("hugo_parado.png", 1),
@@ -98,53 +101,34 @@ NPC_SPRITES = {
     3: ("rolim.png", 7),
 }
 
- # Numeração visual das salas
+
+# Numeração visual das salas
 NPC_NUMBERS = {
-    1: 1,  # Anderson
-    4: 2,  # Hugo
-    2: 3,  # Rickson
-    3: 4,  # Rolim
+    3: 1,  # Rolim
+    2: 2,  # Rickson
+    1: 3,  # Anderson
+    4: 4,  # Hugo
 }
 
 
 # ─────────────────────────────────────────────────────
-#  CLASSE NPC – PERSONAGEM NÃO JOGÁVEL
+# CLASSE NPC – PERSONAGEM NÃO JOGÁVEL
 # ─────────────────────────────────────────────────────
+
 class NPC:
-    """
-    Representa um personagem suspeito com quem o jogador interage.
 
-    Cada NPC:
-        - Fica parado em sua posição no mapa (definida pelo RAW_MAP)
-        - Exibe seu nome e "[E]" quando o player se aproxima
-        - Ao interagir, inicia diálogo → minigame → resultado
-        - Após concluído (done=True), fica escurecido e sem o [E]
-
-    Atributos:
-        data    → dicionário de NPC_DATA com falas, cor, minigame, etc.
-        x, y    → posição em pixels no mundo
-        done    → True após o minigame ser concluído (vitória ou derrota)
-        success → True se o jogador venceu o minigame deste NPC
-    """
-
-    SIZE = 24   # mesmo tamanho que o player para consistência visual
+    SIZE = 24
 
     def __init__(self, data, tx, ty):
-        """
-        Inicializa o NPC com seus dados e posição de tile.
 
-        Parâmetros:
-            data  → dicionário de NPC_DATA correspondente
-            tx,ty → coordenadas de tile retiradas do RAW_MAP
-        """
-        self.data    = data
-        self.x       = tx * TILE + TILE // 2
-        self.y       = ty * TILE + TILE // 2
-        self.done    = False    # False = ainda disponível para interação
-        self.success = False    # resultado do minigame
+        self.data = data
+        self.x = tx * TILE + TILE // 2
+        self.y = ty * TILE + TILE // 2
+        self.done = False
+        self.success = False
 
-                # Carrega a sprite do professor
-        
+        # Carrega a sprite do professor
+
         arquivo, colunas = NPC_SPRITES[self.data["id"]]
         caminho = Path(__file__).parent / "imagens" / arquivo
 
@@ -172,33 +156,23 @@ class NPC:
         else:
             self.sprite = pygame.transform.scale(sheet, (48, 64))
 
-            
     def rect(self):
-        """
-        Retorna pygame.Rect de colisão/posição do NPC no espaço do mundo.
-        Usado internamente e por near() para verificar proximidade.
-        """
         h = self.SIZE
-        return pygame.Rect(self.x - h // 2, self.y - h // 2, h, h)
+        return pygame.Rect(
+            self.x - h // 2,
+            self.y - h // 2,
+            h,
+            h
+        )
 
     def near(self, player):
-        """
-        Verifica se o player está próximo o suficiente para interagir.
-
-        Usa distância euclidiana (math.hypot) entre os centros.
-        Limiar: 1.8 × TILE = 57.6 px (~1,8 tiles de distância).
-
-        Retorna:
-            True  → player pode pressionar E para conversar
-            False → player está longe demais
-
-        Impacto no jogo:
-            Controla quando o "[E]" aparece sobre o NPC e quando
-            a interação é registrada em Game.interact().
-        """
-        return math.hypot(self.x - player.x, self.y - player.y) < TILE * 1.8
+        return math.hypot(
+            self.x - player.x,
+            self.y - player.y
+        ) < TILE * 1.8
 
     def draw(self, surf, cam_x, cam_y):
+
         r = self.rect().move(-cam_x, -cam_y)
         col = self.data["color"]
 
@@ -213,11 +187,21 @@ class NPC:
 
         # Nome do NPC
         lb = font_sm.render(self.data["name"], True, col)
-        surf.blit(lb, (sprite_rect.centerx - lb.get_width() // 2,
-                       sprite_rect.top - 18))
+        surf.blit(
+            lb,
+            (
+                sprite_rect.centerx - lb.get_width() // 2,
+                sprite_rect.top - 18
+            )
+        )
 
         # Indicador [E]
         if not self.done:
             hint = font_sm.render("[E]", True, C_ACCENT)
-            surf.blit(hint, (sprite_rect.centerx - hint.get_width() // 2,
-                             sprite_rect.top - 34))
+            surf.blit(
+                hint,
+                (
+                    sprite_rect.centerx - hint.get_width() // 2,
+                    sprite_rect.top - 34
+                )
+            )
